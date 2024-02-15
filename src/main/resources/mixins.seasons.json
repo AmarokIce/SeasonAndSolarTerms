@@ -1,11 +1,11 @@
 {
   "required": true,
   "minVersion": "0.8.5",
-  "package": "club.starry.example.mixin",
+  "package": "club.someoneice.www.season.mixin",
   "refmap": "mixins.examplemod.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "ExampleModMixin"
+    "CropMixin"
   ]
 }
