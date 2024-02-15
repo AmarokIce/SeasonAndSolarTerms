@@ -1,6 +1,6 @@
 package club.someoneice.www.season;
 
-import club.someoneice.www.season.season.Season;
+import club.someoneice.www.season.season.Seasons;
 import com.google.common.collect.Maps;
 import net.minecraft.block.IGrowable;
 
@@ -10,16 +10,23 @@ import java.util.Map;
 public class CropManager {
     public static final Map<IGrowable, CropManager> CROP_MANAGER_MAP = Maps.newHashMap();
 
+    public static CropManager registerCropManager(IGrowable growable) {
+        CropManager cropManager = new CropManager(growable);
+        CROP_MANAGER_MAP.put(growable, cropManager);
+        return cropManager;
+    }
+
+
     public final IGrowable crop;
 
     private final Map<Integer, CropData> crop_data_map = Maps.newHashMap();
 
-    public CropManager(IGrowable crop) {
+    private CropManager(IGrowable crop) {
         this.crop = crop;
     }
 
-    public CropManager set(int Age, Season[] seasons, float minTemperature, float maxTemperature) {
-        this.crop_data_map.put(Age, new CropData(Age, seasons, minTemperature, maxTemperature));
+    public CropManager set(int Age, Seasons[] seasons, Seasons[] deathSeasons, float minTemperature, float maxTemperature) {
+        this.crop_data_map.put(Age, new CropData(Age, seasons, deathSeasons, minTemperature, maxTemperature));
         return this;
     }
 
@@ -34,17 +41,18 @@ public class CropManager {
             if (iAge > age) break;
             oAge = iAge;
         }
-        CropData data = this.crop_data_map.get(oAge);
-        return temperature >= data.minTemperature && temperature <= data.maxTemperature;
+        if (!this.crop_data_map.containsKey(oAge)) return true;
+        CropData data = this.crop_data_map.get(age);
+        return  temperature >= data.minTemperature && temperature <= data.maxTemperature;
     }
 
-    public boolean canGrow(int age, float temperature, Season season) {
+    public boolean canGrow(int age, float temperature, Seasons seasons) {
         boolean flag = checkCanLive(age, temperature);
         if (!flag) return false;
 
         if (this.crop_data_map.containsKey(age)) {
             CropData data = this.crop_data_map.get(age);
-            return Arrays.stream(data.seasons).anyMatch(it -> it == season);
+            return Arrays.stream(data.seasons).anyMatch(it -> it == seasons);
         }
 
         int oAge = 0;
@@ -52,21 +60,22 @@ public class CropManager {
             if (iAge > age) break;
             oAge = iAge;
         }
-        CropData data = this.crop_data_map.get(oAge);
-        return Arrays.stream(data.seasons).anyMatch(it -> it == season);
+        if (!this.crop_data_map.containsKey(oAge)) return true;
+        CropData data = this.crop_data_map.get(age);
+        return Arrays.stream(data.seasons).anyMatch(it -> it == seasons);
     }
 
     private static final class CropData {
         public final int age;
-        public final Season[] seasons;
-        public final Season[] deadSeason;
+        public final Seasons[] seasons;
+        public final Seasons[] deadSeasons;
         public final float minTemperature;
         public final float maxTemperature;
 
-        public CropData(int age, Season[] seasons, Season[] deadSeason, float minTemperature, float maxTemperature) {
+        public CropData(int age, Seasons[] seasons, Seasons[] deadSeasons, float minTemperature, float maxTemperature) {
             this.age = age;
             this.seasons = seasons;
-            this.deadSeason = deadSeason;
+            this.deadSeasons = deadSeasons;
             this.minTemperature = minTemperature;
             this.maxTemperature = maxTemperature;
         }

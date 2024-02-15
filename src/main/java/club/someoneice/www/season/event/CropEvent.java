@@ -8,8 +8,6 @@ import net.minecraftforge.event.entity.player.BonemealEvent;
 public class CropEvent {
     @SubscribeEvent
     public void onBonemealUsing(BonemealEvent event) {
-        if (event.block instanceof IGrowable && CropManager.CROP_MANAGER_MAP.containsKey((IGrowable) event.block)) {
-            event.setCanceled(true);
-        }
+        if (event.block instanceof IGrowable && CropManager.CROP_MANAGER_MAP.containsKey((IGrowable) event.block)) event.setCanceled(true);
     }
 }

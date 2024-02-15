@@ -1,11 +1,15 @@
 {
   "required": true,
-  "minVersion": "0.8.5",
+  "minVersion": "0.7.11",
   "package": "club.someoneice.www.season.mixin",
-  "refmap": "mixins.examplemod.refmap.json",
+  "refmap": "${mixin_refmap}",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "CropMixin",
+    "WorldMixin"
+  ],
   "client": [
-    "CropMixin"
+    "GrassBlockMixin"
   ]
 }
